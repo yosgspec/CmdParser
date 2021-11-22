@@ -1,0 +1,28 @@
+#runtime "hsp3cl"
+#packopt name "cmdtest"
+#cmpopt varinit 1
+#include "CmdParser.as"
+
+*main
+	dimtype obj,vartype("struct")
+	flgKeys="help","version"
+	optKeys="alpha","beta","gamma","alpaca"
+	new@cmdParser cmd,flgKeys,optKeys
+	if ""!refstr {
+		mes "{\"hsp3.6\":{\"refstr\":\""+refstr+"\"}}"
+		end
+	}
+	if cmdIsDefault(cmd) {
+		mes "{\"hsp3.6\":\"デフォルトオプションで実行しています。\"}"
+		end
+	}
+	cmdRef cmd,args,flgs,opts
+	q="\""
+	if 0<cmdArgsLength(cmd): joinArgs=q+dcJoinArray(args,"\",\"")+q: else: joinArgs=""
+	if 0<dcCount(flgs): q="\"": else: q=""
+	joinFlgs=q+dcJoinDict(flgs,"\":",",\"")
+	strrep joinFlgs,":1",":true"
+	strrep joinFlgs,":0",":false"
+	if 0<dcCount(opts): q="\"": else: q=""
+	joinOpts=q+dcJoinDict(opts,"\":\"","\",\"")+q
+	mes strf("{\"hsp3.6\":{\"args\":[%s],\"flgs\":{%s},\"opts\":{%s}}}",joinArgs,joinFlgs,joinOpts)

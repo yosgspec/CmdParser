@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": true,
+    "module": "esnext",
+    "target": "es2021",
+    "allowJs": true
+  }
+}
