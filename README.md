@@ -1,5 +1,5 @@
 # CmdParser
-非常にシンプルなHSP3、TypeScript、C#、Python用のコマンドラインパーサ。
+HSP3、TypeScript、C#、Python用の非常にシンプルなコマンドラインパーサ。
 
 ```bash
 $ runtime
