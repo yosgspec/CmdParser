@@ -324,7 +324,7 @@ cmdRefOpts
 %group
 コマンドラインパーサ
 %*/
-	#define ref(%1,%2=defaultArgs,%3=defaultFlgs,%4=defaultOpts) \
+	#define ref(%1,%2=defaultArgs@CmdParser,%3=defaultFlgs@CmdParser,%4=defaultOpts@CmdParser) \
 		sdim %2 :\
 		if typeLbl@CmdParser!=vartype(%2){__refArgs@cmdParser %1,%2}\
 		dimtype %3,typeMod@CmdParser :\
@@ -332,7 +332,7 @@ cmdRefOpts
 		dimtype %4,typeMod@CmdParser :\
 		if typeLbl@CmdParser!=vartype(%4){__refOpts@cmdParser %1,%4}
 
-
+	#define ctype isNaN(%1) 0.0=%1 & "-0"!=strmid(%1,0,2)
 /*
 %index
 new@CmdParser
@@ -354,10 +354,10 @@ optKeys : 引数付きオプションに設定したいキーの配列(文字列)[省略可]
 オプションの種類は2種類あり、フラグオプションの物と引数付きオプションの2種類が選択できます。
 
 フラグオプション : オプションが含まれるだけで効力を持つ
-例: hsp.exe --help
+例: cmdhsp --help
 
 引数付きオプション : オプションと値を与える必要がある
-例: hsp.exe --lang ja
+例: cmdhsp --lang ja
 
 コマンドラインで使用できるオプションの形式はロングオプション(--○○○○)とショートオプション(-○)の2タイプがあります。
 
@@ -366,6 +366,10 @@ optKeys : 引数付きオプションに設定したいキーの配列(文字列)[省略可]
 
 ショートオプションはロングオプションの頭文字を取り自動で設定されます。
 頭文字の重複があった場合は配列順で先に出現した1つだけにショートオプションが設定されます。
+
+また、ショートオプションは連ねて複合させることもできます。
+その場合、引数を指定できるのは一番最後のオプションに限ります。
+例: cmdhsp -vhl ja ⇒ cmdhsp -v -h -l ja
 
 解析した結果はcmdRefArgs, cmdRefFlgs, cmdRefOpts, cmdRefなどの命令によって取得します。
 
@@ -383,7 +387,7 @@ cmdRef
 %group
 コマンドラインパーサ
 %*/
-	#define new(%1,%2=defaultFlgKeys,%3=defaultOptKeys) \
+	#define new(%1,%2=defaultFlgKeys@CmdParser,%3=defaultOptKeys@CmdParser) \
 		dimtype %1,typeMod@CmdParser: newmod %1,CmdParser,%2,%3
 	#modinit array flgKeys,array optKeys
 		__argsLength=0
@@ -395,14 +399,33 @@ cmdRef
 
 		errMes=""
 		rtCount=0
-		refArray args
-		if length(args)=1 & args="" {
+		refArray inputArgs
+		if length(inputArgs)=1 & inputArgs="" {
 			__isDefault=1
 			return errMes
 		}
+
+		#define ctype strNumChk(%1) (0=(0.0=%1 & "-0"!=strmid(%1,0,2)))
+		ldim args,0
+		repeat length(inputArgs),rtCount
+			arg=inputArgs.cnt
+			if 2<strlen(arg) {
+			if "--"!=strmid(arg,0,2) {
+			if "-"=strmid(arg,0,1) {
+			if 0=strNumChk(arg) {
+				repeat strlen(arg)-1,1
+					if typeLbl=vartype(args): last=0: else: last=length(args)
+					args(last)="-"+strmid(arg,cnt,1)
+				loop
+				continue
+			}}}}
+			if typeLbl=vartype(args): last=0: else: last=length(args)
+			args(last)=arg
+		loop
+
 		hasflgKeys=typeStr=vartype(flgKeys)
 		hasOptKeys=typeStr=vartype(optKeys)
-		i=rtCount
+		i=0
 		repeat:if length(args)<=i: break
 			arg=args(i)
 			if typeStr=vartype(flgKeys) {
@@ -432,7 +455,7 @@ cmdRef
 					}
 				next
 			}
-			if strmid(arg,0,1)="-":if 0.0=arg & "-0"!=strmid(arg,0,2) {
+			if strmid(arg,0,1)="-":if 0=strNumChk(arg) {
 				errMes=strf("オプション「%s」は定義されていません。",arg)
 				break
 			}

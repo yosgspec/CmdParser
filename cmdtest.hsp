@@ -10,11 +10,11 @@
 	new@cmdParser cmd,flgKeys,optKeys
 	if ""!refstr {
 		mes "{\"hsp3.6\":{\"refstr\":\""+refstr+"\"}}"
-		end
+		goto*exit
 	}
 	if cmdIsDefault(cmd) {
 		mes "{\"hsp3.6\":\"デフォルトオプションで実行しています。\"}"
-		end
+		goto*exit
 	}
 	cmdRef cmd,args,flgs,opts
 	q="\""
@@ -26,3 +26,4 @@
 	if 0<dcCount(opts): q="\"": else: q=""
 	joinOpts=q+dcJoinDict(opts,"\":\"","\",\"")+q
 	mes strf("{\"hsp3.6\":{\"args\":[%s],\"flgs\":{%s},\"opts\":{%s}}}",joinArgs,joinFlgs,joinOpts)
+*exit

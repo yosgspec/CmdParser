@@ -27,8 +27,9 @@ set options_10=--unknown
 set options_11=-a
 set options_12=-a ƒ¿ --alpha A
 set options_13=-a -3 -2 -h -1 -0
+set options_14=-vha ƒ¿
 
-for /l %%i in (0,1,12) do (
+for /l %%i in (0,1,14) do (
 	echo;
 	call echo $ runtime %%options_%%i%%
 	for %%n in (hsp nodejs csharp python) do (

@@ -20,10 +20,10 @@ class CmdParser:
 	オプションの種類は2種類あり、フラグオプションの物と引数付きオプションの2種類が選択できます。
 	
 	フラグオプション : オプションが含まれるだけで効力を持つ
-	例: hsp.exe --help
+	例: python3 cmd.py --help
 	
 	引数付きオプション : オプションと値を与える必要がある
-	例: hsp.exe --lang ja
+	例: python3 cmd.py --lang ja
 	
 	コマンドラインで使用できるオプションの形式はロングオプション(--○○○○)とショートオプション(-○)の2タイプがあります。
 	
@@ -32,9 +32,13 @@ class CmdParser:
 	
 	ショートオプションはロングオプションの頭文字を取り自動で設定されます。
 	頭文字の重複があった場合は配列順で先に出現した1つだけにショートオプションが設定されます。
-		
-	解析した結果はCmdParser.args, CmdParser.flgs, CmdParser.optsによって取得します。
 	
+	また、ショートオプションは連ねて複合させることもできます。
+	その場合、引数を指定できるのは一番最後のオプションに限ります。
+	例: python3 cmd.py -vhl ja ⇒ python3 cmd.py -v -h -l ja
+
+	解析した結果はCmdParser.args, CmdParser.flgs, CmdParser.optsによって取得します。
+
 	Args:
 		flgKeys: フラグオプションに設定したいキーの配列
 		optKeys: 引数付きオプションに設定したいキーの配列
@@ -70,11 +74,25 @@ class CmdParser:
 		self.__opts:Dict[str,str]={}
 
 		rtCount:int=1
-		args=sys.argv
-		if len(args)<=rtCount:
+		inputArgs=sys.argv
+		if len(inputArgs)<=rtCount:
 			self.__isDefault=True
 			return
-		i=rtCount
+
+		args:List[str]=[]
+		for i in range(rtCount,len(inputArgs)):
+			arg=inputArgs[i]
+			if(2<len(arg)
+			and "--"!=arg[:2]
+			and "-"==arg[0]):
+				try: float(arg)
+				except:
+					for s in arg[1:]:
+						args.append("-"+s)
+					continue
+			args.append(arg)
+
+		i=0
 		while i<len(args):
 			arg=args[i]
 			for key in flgKeys:

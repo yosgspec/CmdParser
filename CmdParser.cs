@@ -40,10 +40,10 @@ class CmdParser{
 	/// オプションの種類は2種類あり、フラグオプションの物と引数付きオプションの2種類が選択できます。
     ///
 	/// フラグオプション : オプションが含まれるだけで効力を持つ
-	/// 例: hsp.exe --help
+	/// 例: cmdnet --help
     ///
 	/// 引数付きオプション : オプションと値を与える必要がある
-	/// 例: hsp.exe --lang ja
+	/// 例: cmdnet --lang ja
     ///
 	/// コマンドラインで使用できるオプションの形式はロングオプション(--○○○○)とショートオプション(-○)の2タイプがあります。
     ///
@@ -52,6 +52,10 @@ class CmdParser{
     ///
 	/// ショートオプションはロングオプションの頭文字を取り自動で設定されます。
 	/// 頭文字の重複があった場合は配列順で先に出現した1つだけにショートオプションが設定されます。
+	///
+	/// また、ショートオプションは連ねて複合させることもできます。
+	/// その場合、引数を指定できるのは一番最後のオプションに限ります。
+	/// 例: cmdnet -vhl ja ⇒ cmdnet -v -h -l ja
 	///
 	/// 解析した結果はCmdParser.args, CmdParser.flgs, CmdParser.optsによって取得します。
 	/// <param name="flgKeys">フラグオプションに設定したいキーの配列</param>
@@ -65,12 +69,28 @@ class CmdParser{
 		this.opts=new Dictionary<string,string>{};
 
 		const int rtCount=1;
-		string[] args=Environment.GetCommandLineArgs();
-		if(args.Length<=rtCount){
+		string[] inputArgs=Environment.GetCommandLineArgs();
+
+		if(inputArgs.Length<=rtCount){
 			this.isDefault=true;
 			return;
 		}
-		for(int i=rtCount;i<args.Length;i++){
+
+		var args=new List<string>{};
+		for(int i=rtCount;i<inputArgs.Length;i++){
+			var arg=inputArgs[i];
+			if(2<arg.Length
+			&& "--"!=arg.Substring(0,2)
+			&& '-'==arg[0]
+			&& !double.TryParse(arg,out _)){
+				foreach(var s in arg.Substring(1))
+					args.Add("-"+s);
+				continue;
+			}
+			args.Add(arg);
+		}
+
+		for(int i=0;i<args.Count;i++){
 			var arg=args[i];
 			foreach(var key in flgKeys){
 				if(arg=="-"+key[0] || arg=="--"+key){
@@ -83,7 +103,7 @@ class CmdParser{
 					i++;
 					if(this.opts.ContainsKey(key))
 						throw new FormatException($"オプション「--{key}」が複数入力されています。");
-					if(args.Length<=i)
+					if(args.Count<=i)
 						throw new FormatException($"オプション「--{key}」に対応する値が入力されていません。");
 					this.opts.Add(key,args[i]);
 					goto cmdnext;

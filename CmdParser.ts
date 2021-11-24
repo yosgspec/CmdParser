@@ -37,10 +37,10 @@ export class CmdParser{
 	 * オプションの種類は2種類あり、フラグオプションの物と引数付きオプションの2種類が選択できます。
 	 *
 	 * フラグオプション : オプションが含まれるだけで効力を持つ
-	 * 例: hsp.exe --help
+	 * 例: node cmd.js --help
 	 *
 	 * 引数付きオプション : オプションと値を与える必要がある
-	 * 例: hsp.exe --lang ja
+	 * 例: node cmd.js --lang ja
 	 *
 	 * コマンドラインで使用できるオプションの形式はロングオプション(--○○○○)とショートオプション(-○)の2タイプがあります。
 	 *
@@ -49,6 +49,10 @@ export class CmdParser{
 	 *
 	 * ショートオプションはロングオプションの頭文字を取り自動で設定されます。
 	 * 頭文字の重複があった場合は配列順で先に出現した1つだけにショートオプションが設定されます。
+	 *
+	 * また、ショートオプションは連ねて複合させることもできます。
+	 * その場合、引数を指定できるのは一番最後のオプションに限ります。
+	 * 例: node cmd.js -vhl ja ⇒ node cmd.js -v -h -l ja
 	 *
 	 * 解析した結果はCmdParser.args, CmdParser.flgs, CmdParser.optsによって取得します。
 	 * @param flgKeys - フラグオプションに設定したいキーの配列
@@ -62,13 +66,28 @@ export class CmdParser{
 		this.opts=new Map<string,string>();
 
 		const rtCount:number=2;
-		const args=process.argv;
-		if(args.length<=rtCount){
+		const inputArgs=process.argv;
+		if(inputArgs.length<=rtCount){
 			this.isDefault=true;
 			return;
 		}
+
+		const args:string[]=[];
+		for(let i=rtCount;i<inputArgs.length;i++){
+			let arg=inputArgs[i];
+			if(2<arg.length
+			&& "--"!=arg.slice(0,2)
+			&& "-"==arg[0]
+			&& !Number.isFinite(+arg)){
+				for(let s of arg.slice(1))
+					args.push("-"+s);
+				continue;
+			}
+			args.push(arg);
+		}
+
 		cmdnext:
-		for(let i=rtCount;i<args.length;i++){
+		for(let i=0;i<args.length;i++){
 			let arg=args[i];
 			for(let key of flgKeys){
 				if(arg=="-"+key[0] || arg=="--"+key){
