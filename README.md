@@ -79,4 +79,16 @@ $ runtime -a α --alpha A
 {"nodejs":{"SyntaxError":"オプション「--alpha」が複数入力されています。"}}
 {"csharp":{"System.FormatException":"オプション「--alpha」が複数入力されています。"}}
 {"python":{"ValueError":"オプション「--alpha」が複数入力されています。"}}
+
+$ runtime -a -3 -2 -h -1 -0
+{"hsp3.6":{"args":["-2","-1","-0"],"flgs":{"help":true,"version":false},"opts":{"alpha":"-3"}}}
+{"nodejs":{"args":["-2","-1","-0"],"flgs":{"help":true,"version":false},"opts":{"alpha":"-3"}}}
+{"csharp":{"args":["-2","-1","-0"],"flgs":{"help":true,"version":false},"opts":{"alpha":"-3"}}}
+{"python":{"args":["-2","-1","-0"],"flgs":{"help":true,"version":false},"opts":{"alpha":"-3"}}}
+
+$ runtime -vha α
+{"hsp3.6":{"args":[],"flgs":{"help":true,"version":true},"opts":{"alpha":"α"}}}
+{"nodejs":{"args":[],"flgs":{"help":true,"version":true},"opts":{"alpha":"α"}}}
+{"csharp":{"args":[],"flgs":{"help":true,"version":true},"opts":{"alpha":"α"}}}
+{"python":{"args":[],"flgs":{"help":true,"version":true},"opts":{"alpha":"α"}}}
 ```
