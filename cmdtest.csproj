@@ -3,7 +3,7 @@
 		<OutputType>Exe</OutputType>
 		<Optimize>true</Optimize>
 		<Configuration>Release</Configuration>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net5</TargetFramework>
 		<SelfContained>false</SelfContained>
 		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
 		<PublishReadyToRun>true</PublishReadyToRun>

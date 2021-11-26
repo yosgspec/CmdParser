@@ -10,6 +10,8 @@
 export class CmdParser{
 	/**
 	 * コマンドラインオプションの有無
+	 *
+	 * @remarks
 	 * コマンドラインオプションがデフォルト(空)の場合はtrueを返します。
 	 */
 	public readonly isDefault:boolean=false;
@@ -30,11 +32,12 @@ export class CmdParser{
 	public readonly opts:Map<string,string>;
 
 	/**
-	 * コマンドライン引数の分割・解析を行うCmdParserクラスのコンストラクタ。
+	 * コマンドライン引数の分割・解析を行うパーサ。
 	 *
+	 * @remarks
 	 * 引数flgKeys, optKeysにはオプションとして設定したい文字列を含む配列を与えます。
 	 *
-	 * オプションの種類は2種類あり、フラグオプションの物と引数付きオプションの2種類が選択できます。
+	 * 与えるオプションはフラグオプションの物と引数付きオプションの2種類が選択できます。
 	 *
 	 * フラグオプション : オプションが含まれるだけで効力を持つ
 	 * 例: node cmd.js --help
@@ -57,10 +60,11 @@ export class CmdParser{
 	 * 解析した結果はCmdParser.args, CmdParser.flgs, CmdParser.optsによって取得します。
 	 * @param flgKeys - フラグオプションに設定したいキーの配列
 	 * @param optKeys - 引数付きオプションに設定したいキーの配列
+	 * @throws {TypeError} 不適切なコマンドラインオプションを与えられた場合に例外を返します。
 	 */
 	constructor(flgKeys?:string[],optKeys?:string[]){
-		flgKeys ||= [];
-		optKeys ||= [];
+		flgKeys=flgKeys ?? [];
+		optKeys=optKeys ?? [];
 		this.args=[];
 		this.flgs=new Map<string,boolean>(flgKeys.map(key=>[key,false]));
 		this.opts=new Map<string,string>();
@@ -99,14 +103,14 @@ export class CmdParser{
 				if(arg=="-"+key[0] || arg=="--"+key){
 					i++;
 					if(this.opts.has(key))
-						throw new SyntaxError(`オプション「--${key}」が複数入力されています。`);
+						throw new TypeError(`オプション「--${key}」が複数入力されています。`);
 					if(args.length<=i)
-						throw new SyntaxError(`オプション「--${key}」に対応する値が入力されていません。`);
+						throw new TypeError(`オプション「--${key}」に対応する値が入力されていません。`);
 					this.opts.set(key,args[i]);
 					continue cmdnext;
 				}
 			}
-			if(arg[0]=="-" && !Number.isFinite(+arg)) throw new SyntaxError(`オプション「${arg}」は定義されていません。`);
+			if(arg[0]=="-" && !Number.isFinite(+arg)) throw new TypeError(`オプション「${arg}」は定義されていません。`);
 			this.args.push(arg);
 		}
 	}

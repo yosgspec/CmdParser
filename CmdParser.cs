@@ -13,8 +13,10 @@ namespace CmdParsers{
 class CmdParser{
 	/// <summary>
 	/// コマンドラインオプションの有無
-	/// コマンドラインオプションがデフォルト(空)の場合はtrueを返します。
 	/// </summary>
+	/// <remarks>
+	/// コマンドラインオプションがデフォルト(空)の場合はtrueを返します。
+	/// </remarks>
 	public readonly bool isDefault=false;
 
 	/// <summary>
@@ -33,11 +35,12 @@ class CmdParser{
 	public readonly Dictionary<string,string> opts;
 
 	/// <summary>
-	/// コマンドライン引数の分割・解析を行うCmdParserクラスのコンストラクタ。
-	///
+	/// コマンドライン引数の分割・解析を行うパーサ。
+	/// </summary>
+	/// <remarks><code>
 	/// 引数flgKeys, optKeysにはオプションとして設定したい文字列を含む配列を与えます。
     ///
-	/// オプションの種類は2種類あり、フラグオプションの物と引数付きオプションの2種類が選択できます。
+	/// 与えるオプションはフラグオプションの物と引数付きオプションの2種類が選択できます。
     ///
 	/// フラグオプション : オプションが含まれるだけで効力を持つ
 	/// 例: cmdnet --help
@@ -58,12 +61,13 @@ class CmdParser{
 	/// 例: cmdnet -vhl ja ⇒ cmdnet -v -h -l ja
 	///
 	/// 解析した結果はCmdParser.args, CmdParser.flgs, CmdParser.optsによって取得します。
+	/// </code></remarks>
 	/// <param name="flgKeys">フラグオプションに設定したいキーの配列</param>
 	/// <param name="optKeys">引数付きオプションに設定したいキーの配列</param>
-	/// </summary>
+	/// <exception cref="FormatException">不適切なオプションを与えられた場合に例外を返します。</exception>
 	public CmdParser(string[] flgKeys=null,string[] optKeys=null){
-		flgKeys ??= new string[]{};
-		optKeys ??= new string[]{};
+		flgKeys=flgKeys ?? new string[]{};
+		optKeys=optKeys ?? new string[]{};
 		this.args=new List<string>{};
 		this.flgs=flgKeys.ToDictionary(key=>key,_=>false);
 		this.opts=new Dictionary<string,string>{};

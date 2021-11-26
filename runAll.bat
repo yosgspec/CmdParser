@@ -9,7 +9,7 @@ rd /s /q obj
 ::実行コマンド
 set runtime_hsp=cmdtest
 set runtime_nodejs=node cmdtest.js
-set runtime_csharp=bin\Release\net6.0\win-x64\publish\cmdtest
+set runtime_csharp=bin\Release\net5\win-x64\publish\cmdtest
 set runtime_python=pypy3 cmdtest.py
 
 ::コマンドラインオプション

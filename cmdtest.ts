@@ -1,3 +1,4 @@
+//CmdParserのテスト
 "use strict";
 import {CmdParser} from "./CmdParser";
 

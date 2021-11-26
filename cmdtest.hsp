@@ -1,3 +1,4 @@
+;CmdParser‚ÌƒeƒXƒg
 #runtime "hsp3cl"
 #packopt name "cmdtest"
 #cmpopt varinit 1

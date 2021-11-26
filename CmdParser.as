@@ -10,7 +10,7 @@ CmdParser
 3.6
 
 %date
-2021/11/17
+2021/11/25
 
 %author
 YOS G-spec
@@ -31,6 +31,9 @@ Win
 Mac
 Cli
 HSP3Dish
+
+%group
+コマンドラインパーサ
 %*/
 
 #include "Dictionary.as"
@@ -65,9 +68,6 @@ cmdRefFlgs
 cmdRefOpts
 cmdRef
 cmdRefArray
-
-%group
-コマンドラインパーサ
 %*/
 #ifndef CmdParserAliasOff
 	#define global cmdIsDefault isDefault@CmdParser
@@ -105,10 +105,7 @@ cmdAry : 分割したコマンドラインを返す配列変数(文字列型)
 
 %href
 dir_cmdline
-#define VarArrayAliasOff
-
-%group
-コマンドラインパーサ
+#define CmdParserAliasOff
 %*/
 	#define refArray(%1) sdim %1: __refArray@CmdParser %1
 	#deffunc local __refArray array args
@@ -160,10 +157,7 @@ cmdRef
 cmdRefArgs
 cmdRefFlgs
 cmdRefOpts
-#define VarArrayAliasOff
-
-%group
-コマンドラインパーサ
+#define CmdParserAliasOff
 %*/
 	#modcfunc local isDefault
 		return __isDefault
@@ -186,13 +180,9 @@ length関数との違いはargsが空の時に0を返すことです。
 
 %href
 new@CmdParser
-cmdRefArray
 cmdRef
 cmdRefArgs
-#define VarArrayAliasOff
-
-%group
-コマンドラインパーサ
+#define CmdParserAliasOff
 %*/
 	#modcfunc local argsLength
 		return __argsLength
@@ -221,10 +211,7 @@ cmdRef
 cmdRefArgsLength
 cmdRefFlgs
 cmdRefOpts
-#define VarArrayAliasOff
-
-%group
-コマンドラインパーサ
+#define CmdParserAliasOff
 %*/
 	#define refArgs(%1,%2) sdim %2: __refArgs@CmdParser %1,%2
 	#modfunc local __refArgs array _args
@@ -251,11 +238,8 @@ cmdRefArray
 cmdRef
 cmdRefArgs
 cmdRefOpts
-#define VarArrayAliasOff
+#define CmdParserAliasOff
 dcItem
-
-%group
-コマンドラインパーサ
 %*/
 	#define refFlgs(%1,%2) dimtype %2,typeMod@CmdParser: __refFlgs@CmdParser %1,%2
 	#modfunc local __refFlgs var _flgs
@@ -284,12 +268,9 @@ cmdRefArray
 cmdRef
 cmdRefArgs
 cmdRefFlgs
-#define VarArrayAliasOff
+#define CmdParserAliasOff
 dcItem
 dcContainsKey
-
-%group
-コマンドラインパーサ
 %*/
 	#define refOpts(%1,%2) dimtype %2,typeMod@CmdParser: __refOpts@CmdParser %1,%2
 	#modfunc local __refOpts var _opts
@@ -319,10 +300,7 @@ cmdRefArray
 cmdRefArgs
 cmdRefFlgs
 cmdRefOpts
-#define VarArrayAliasOff
-
-%group
-コマンドラインパーサ
+#define CmdParserAliasOff
 %*/
 	#define ref(%1,%2=defaultArgs@CmdParser,%3=defaultFlgs@CmdParser,%4=defaultOpts@CmdParser) \
 		sdim %2 :\
@@ -351,7 +329,10 @@ optKeys : 引数付きオプションに設定したいキーの配列(文字列)[省略可]
 引数cmdに配列を与える場合は配列変数が破棄されますので注意してください。
 引数flgKeys, optKeysにはオプションとして設定したい文字列を含む配列を与えます。
 
-オプションの種類は2種類あり、フラグオプションの物と引数付きオプションの2種類が選択できます。
+不適切なオプションが与えられた場合はrefstrにメッセージを返します。
+(正常な場合は空の文字列が返ります)
+
+与えるオプションはフラグオプションの物と引数付きオプションの2種類が選択できます。
 
 フラグオプション : オプションが含まれるだけで効力を持つ
 例: cmdhsp --help
@@ -382,10 +363,7 @@ cmdRefArgs
 cmdRefFlgs
 cmdRefOpts
 cmdRef
-#define VarArrayAliasOff
-
-%group
-コマンドラインパーサ
+#define CmdParserAliasOff
 %*/
 	#define new(%1,%2=defaultFlgKeys@CmdParser,%3=defaultOptKeys@CmdParser) \
 		dimtype %1,typeMod@CmdParser: newmod %1,CmdParser,%2,%3
