@@ -310,7 +310,6 @@ cmdRefOpts
 		dimtype %4,typeMod@CmdParser :\
 		if typeLbl@CmdParser!=vartype(%4){__refOpts@cmdParser %1,%4}
 
-	#define ctype isNaN(%1) 0.0=%1 & "-0"!=strmid(%1,0,2)
 /*
 %index
 new@CmdParser
